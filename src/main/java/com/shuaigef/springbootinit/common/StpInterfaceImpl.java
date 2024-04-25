@@ -1,5 +1,6 @@
 package com.shuaigef.springbootinit.common;
 
+import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
 import com.shuaigef.springbootinit.model.entity.User;
@@ -8,8 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.shuaigef.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 自定义权限加载接口实现类
@@ -35,7 +34,7 @@ public class StpInterfaceImpl implements StpInterface {
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
         // 从 SaSession 获取当前登录用户信息
-        User user = (User) StpUtil.getSession().get(USER_LOGIN_STATE);
+        User user = (User) StpUtil.getSession().get(SaSession.USER);
         String userRole = user.getUserRole();
         UserRoleEnum userRoleEnum = UserRoleEnum.getEnumByValue(userRole);
         List<String> list = new ArrayList<String>();

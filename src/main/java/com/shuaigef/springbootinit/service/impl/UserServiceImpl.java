@@ -1,5 +1,6 @@
 package com.shuaigef.springbootinit.service.impl;
 
+import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -26,8 +27,6 @@ import org.springframework.util.DigestUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.shuaigef.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户服务实现
@@ -107,7 +106,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // 3. 登录并记录用户的登录态
         StpUtil.login(user.getId());
-        StpUtil.getSession().set(USER_LOGIN_STATE, user);
+        StpUtil.getSession().set(SaSession.USER, user);
         // 4. 返回token
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         return tokenInfo;
@@ -120,7 +119,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public User getLoginUser() {
-        Object userObj = StpUtil.getSession().get(USER_LOGIN_STATE);
+        Object userObj = StpUtil.getSession().get(SaSession.USER);
         User currentUser = (User) userObj;
         // 从数据库查询（追求性能的话可以注释，直接走缓存）
         long userId = currentUser.getId();
@@ -139,7 +138,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public boolean isAdmin() {
         // 仅管理员可查询
-        Object userObj = StpUtil.getSession().get(USER_LOGIN_STATE);
+        Object userObj = StpUtil.getSession().get(SaSession.USER);
         User user = (User) userObj;
         return user != null && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole());
     }
