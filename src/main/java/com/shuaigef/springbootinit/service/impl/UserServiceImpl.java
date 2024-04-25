@@ -1,7 +1,5 @@
 package com.shuaigef.springbootinit.service.impl;
 
-import static com.shuaigef.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
-
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -19,14 +17,17 @@ import com.shuaigef.springbootinit.model.vo.LoginUserVO;
 import com.shuaigef.springbootinit.model.vo.UserVO;
 import com.shuaigef.springbootinit.service.UserService;
 import com.shuaigef.springbootinit.utils.SqlUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.shuaigef.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户服务实现

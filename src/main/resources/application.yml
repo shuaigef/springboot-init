@@ -83,3 +83,11 @@ sa-token:
 #    password:
 #    # 连接超时时间
 #    timeout: 5000
+# 对象存储
+# todo 需替换配置
+cos:
+  client:
+    accessKey: xxx
+    secretKey: xxx
+    region: xxx
+    bucket: xxx
