@@ -3,6 +3,7 @@ package com.shuaigef.springbootinit.common;
 import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
 import com.shuaigef.springbootinit.model.entity.User;
+import com.shuaigef.springbootinit.model.enums.UserRoleEnum;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,15 +24,8 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
+        // 初始化项目未使用权限校验，只使用角色校验
         List<String> list = new ArrayList<String>();
-        if(StpUtil.hasRole("admin")){
-            list.add("admin");
-            return list;
-        }
-        if(StpUtil.hasRole("user")){
-            list.add("user");
-            return list;
-        }
         return list;
     }
 
@@ -43,15 +37,12 @@ public class StpInterfaceImpl implements StpInterface {
         // 从 SaSession 获取当前登录用户信息
         User user = (User) StpUtil.getSession().get(USER_LOGIN_STATE);
         String userRole = user.getUserRole();
+        UserRoleEnum userRoleEnum = UserRoleEnum.getEnumByValue(userRole);
         List<String> list = new ArrayList<String>();
-        if(userRole.equals("admin")){
-            list.add("admin");
+        if (userRoleEnum == null) {
             return list;
         }
-        if(userRole.equals("user")){
-            list.add("user");
-            return list;
-        }
+        list.add(userRoleEnum.getValue());
         return list;
     }
 
