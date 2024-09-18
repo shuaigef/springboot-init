@@ -1,4 +1,7 @@
-package com.shuaigef.springbootinit.common;
+package com.shuaigef.springbootinit.common.utils;
+
+import com.shuaigef.springbootinit.common.code.ErrorCode;
+import com.shuaigef.springbootinit.common.response.BaseResponse;
 
 /**
  * 返回工具类
@@ -16,6 +19,29 @@ public class ResultUtils {
      */
     public static <T> BaseResponse<T> success(T data) {
         return new BaseResponse<>(0, data, "ok");
+    }
+
+    /**
+     * 成功
+     *
+     * @param message
+     * @param <T>
+     * @return
+     */
+    public static <T> BaseResponse<T> success(String message) {
+        return new BaseResponse<>(0, null, message);
+    }
+
+    /**
+     * 成功
+     *
+     * @param data
+     * @param message
+     * @param <T>
+     * @return
+     */
+    public static <T> BaseResponse<T> success(T data, String message) {
+        return new BaseResponse<>(0, data, message);
     }
 
     /**

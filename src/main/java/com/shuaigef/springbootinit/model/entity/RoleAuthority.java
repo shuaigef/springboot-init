@@ -11,15 +11,15 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 /**
- * 用户表
+ * 角色权限表
  *
- * @TableName user
+ * @TableName role_authority
  * @author <a href="https://github.com/shuaigef">shuaigef</a>
  */
-@ApiModel(description = "用户表对象")
-@TableName(value = "user")
+@ApiModel(description = "角色权限表对象")
+@TableName(value = "role_authority")
 @Data
-public class User implements Serializable {
+public class RoleAuthority implements Serializable {
 
     /**
      * id
@@ -29,34 +29,10 @@ public class User implements Serializable {
     private Long id;
 
     /**
-     * 用户名
+     * 权限id
      */
-    @ApiModelProperty(value = "用户名")
-    private String username;
-
-    /**
-     * 密码
-     */
-    @ApiModelProperty(value = "密码")
-    private String password;
-
-    /**
-     * 昵称
-     */
-    @ApiModelProperty(value = "昵称")
-    private String nickname;
-
-    /**
-     * 用户头像
-     */
-    @ApiModelProperty(value = "用户头像")
-    private String userAvatar;
-
-    /**
-     * 用户简介
-     */
-    @ApiModelProperty(value = "用户简介")
-    private String userProfile;
+    @ApiModelProperty(value = "权限id")
+    private Long authorityId;
 
     /**
      * 角色id

@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 /**
- * 用户视图（脱敏）
+ * 角色视图
  *
  * @author <a href="https://github.com/shuaigef">shuaigef</a>
  */
-@ApiModel("用户视图")
+@ApiModel("角色视图")
 @Data
-public class UserVO implements Serializable {
+public class RoleVO implements Serializable {
 
     /**
      * id
@@ -23,28 +23,22 @@ public class UserVO implements Serializable {
     private Long id;
 
     /**
-     * 用户昵称
+     * 角色名称
      */
-    @ApiModelProperty(value = "用户昵称")
-    private String username;
+    @ApiModelProperty(value = "角色名称")
+    private String roleName;
 
     /**
-     * 用户头像
+     * 角色描述
      */
-    @ApiModelProperty(value = "用户头像")
-    private String userAvatar;
+    @ApiModelProperty(value = "角色描述")
+    private String roleDesc;
 
     /**
-     * 用户简介
+     * 角色类型
      */
-    @ApiModelProperty(value = "用户简介")
-    private String userProfile;
-
-    /**
-     * 用户角色：user/admin/ban
-     */
-    @ApiModelProperty(value = "用户角色")
-    private String userRole;
+    @ApiModelProperty(value = "角色类型")
+    private String roleType;
 
     /**
      * 创建时间

@@ -1,16 +1,20 @@
 package com.shuaigef.springbootinit.controller;
 
 import cn.hutool.core.io.FileUtil;
-import com.shuaigef.springbootinit.common.BaseResponse;
-import com.shuaigef.springbootinit.common.ErrorCode;
-import com.shuaigef.springbootinit.common.ResultUtils;
+import com.shuaigef.springbootinit.common.code.ErrorCode;
+import com.shuaigef.springbootinit.common.response.BaseResponse;
+import com.shuaigef.springbootinit.common.utils.ResultUtils;
+import com.shuaigef.springbootinit.common.utils.SecurityUtils;
 import com.shuaigef.springbootinit.constant.FileConstant;
 import com.shuaigef.springbootinit.exception.BusinessException;
 import com.shuaigef.springbootinit.manager.CosManager;
 import com.shuaigef.springbootinit.model.dto.file.UploadFileRequest;
-import com.shuaigef.springbootinit.model.entity.User;
 import com.shuaigef.springbootinit.model.enums.FileUploadBizEnum;
 import com.shuaigef.springbootinit.service.UserService;
+import io.swagger.annotations.Api;
+import java.io.File;
+import java.util.Arrays;
+import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,15 +23,12 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
-import java.io.File;
-import java.util.Arrays;
-
 /**
  * 文件接口
  *
  * @author <a href="https://github.com/shuaigef">shuaigef</a>
  */
+@Api(tags = "文件上传")
 @RestController
 @RequestMapping("/file")
 @Slf4j
@@ -55,11 +56,10 @@ public class FileController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         validFile(multipartFile, fileUploadBizEnum);
-        User loginUser = userService.getLoginUser();
         // 文件目录：根据业务、用户来划分
         String uuid = RandomStringUtils.randomAlphanumeric(8);
         String filename = uuid + "-" + multipartFile.getOriginalFilename();
-        String filepath = String.format("/%s/%s/%s", fileUploadBizEnum.getValue(), loginUser.getId(), filename);
+        String filepath = String.format("/%s/%s/%s", fileUploadBizEnum.getValue(), SecurityUtils.getCurrentUserId(), filename);
         File file = null;
         try {
             // 上传文件

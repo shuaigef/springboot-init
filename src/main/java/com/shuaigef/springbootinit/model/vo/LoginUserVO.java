@@ -1,52 +1,42 @@
 package com.shuaigef.springbootinit.model.vo;
 
+import com.shuaigef.springbootinit.model.entity.Authority;
+import com.shuaigef.springbootinit.model.entity.SessionUser;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.io.Serializable;
-import java.util.Date;
-
 /**
- * 已登录用户视图（脱敏）
+ * 登录用户视图
  *
  * @author <a href="https://github.com/shuaigef">shuaigef</a>
- **/
+ */
+@ApiModel("登录用户视图")
 @Data
+@AllArgsConstructor
 public class LoginUserVO implements Serializable {
 
     /**
-     * 用户 id
+     * jwt令牌
      */
-    private Long id;
+    @ApiModelProperty(value = "jwt令牌")
+    private String token;
 
     /**
-     * 用户昵称
+     * 用户信息
      */
-    private String userName;
+    @ApiModelProperty(value = "用户信息")
+    private SessionUser userInfo;
 
     /**
-     * 用户头像
+     * 权限列表
      */
-    private String userAvatar;
-
-    /**
-     * 用户简介
-     */
-    private String userProfile;
-
-    /**
-     * 用户角色：user/admin/ban
-     */
-    private String userRole;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
+    @ApiModelProperty(value = "权限列表")
+    private List<Authority> authorityList;
 
     private static final long serialVersionUID = 1L;
+
 }

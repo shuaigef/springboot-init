@@ -1,50 +1,37 @@
 package com.shuaigef.springbootinit.model.dto.user;
 
-import com.shuaigef.springbootinit.common.PageRequest;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
+import com.shuaigef.springbootinit.common.request.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import lombok.Data;
 
 /**
- * 用户查询请求
+ * 用户新增请求
  *
  * @author <a href="https://github.com/shuaigef">shuaigef</a>
  */
-@EqualsAndHashCode(callSuper = true)
+@ApiModel(description = "分页查询用户请求")
 @Data
 public class UserQueryRequest extends PageRequest implements Serializable {
 
     /**
-     * id
+     * 用户名
      */
-    private Long id;
+    @ApiModelProperty(value = "用户名")
+    private String username;
 
     /**
-     * 开放平台id
+     * 昵称
      */
-    private String unionId;
+    @ApiModelProperty(value = "昵称")
+    private String nickname;
 
     /**
-     * 公众号openId
+     * 角色id
      */
-    private String mpOpenId;
-
-    /**
-     * 用户昵称
-     */
-    private String userName;
-
-    /**
-     * 简介
-     */
-    private String userProfile;
-
-    /**
-     * 用户角色：user/admin/ban
-     */
-    private String userRole;
+    @ApiModelProperty(value = "角色id")
+    private Long roleId;
 
     private static final long serialVersionUID = 1L;
-
 }

@@ -1,8 +1,8 @@
-package com.shuaigef.springbootinit.common;
+package com.shuaigef.springbootinit.common.response;
 
-import lombok.Data;
-
+import com.shuaigef.springbootinit.common.code.ErrorCode;
 import java.io.Serializable;
+import lombok.Data;
 
 /**
  * 通用返回类

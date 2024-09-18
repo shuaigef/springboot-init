@@ -2,7 +2,7 @@
 
 > 作者：shuaigef
 
-基于 Java SpringBoot 的项目初始模板，整合了常用框架和主流业务的示例代码。
+基于 Java SpringBoot 的项目初始模板，使用 Spring Security 作为权限校验框架，整合了常用框架和主流业务的示例代码。
 
 ## 模板特点
 
@@ -13,7 +13,8 @@
 - MyBatis + MyBatis Plus 数据访问（开启分页）
 - Spring AOP 切面编程
 - Spring 事务注解
-- SaToken 轻量级权限认证
+- Spring security + JWT 权限验证
+- knife4j + swagger 在线调试接口
 
 ### 数据存储
 
@@ -29,8 +30,7 @@
 
 ### 业务特性
 
-- Spring Session Redis 分布式登录
-- SaToken 开启路由拦截，使用前后端分离模式，并集成 Redis
+- Spring Security + JWT 接口权限校验
 - 全局请求响应拦截器（记录日志）
 - 全局异常处理器
 - 自定义错误码
@@ -43,12 +43,12 @@
 ## 业务功能
 
 - 提供示例 SQL（用户表）
-- 用户登录、注册、注销、更新、检索、权限管理
+- 用户登录、新增、查询、删除，系统权限管理
 
 ### 单元测试
 
 - JUnit5 单元测试
-- 示例单元测试类
+- 示例单元测试类（暂无）
 
 ### 架构设计
 
@@ -96,7 +96,7 @@ redis:
       min-idle: 0
 ```
 
-3）移除 `MainApplication` 类开头 `@SpringBootApplication` 注解内的 exclude 参数：
+2）移除 `MainApplication` 类开头 `@SpringBootApplication` 注解内的 exclude 参数：
 
 修改前：
 
@@ -111,36 +111,23 @@ redis:
 @SpringBootApplication
 ```
 
-### Redis 分布式登录
+### Spring Security 配置
 
-1）Redis 配置，见上
+1）Spring Security 配置 -> `/config/SecurityConfig.java`
 
-2）修改 `application.yml` 中的 session 存储方式：
+2）修改 `SecurityConstant.java` 中需要放行和不做权限校验的请求路径
 
-```yml
-spring:
-  session:
-    store-type: redis
-```
+### Knife4j 配置
 
-
-
-### SaToken 集成 Redis，并使用独立的 Redis
-
-1）Redis 配置，见上（完成 Redis 配置即开启 集成Redis）
-
-2）修改 `application.yml` 中的 alone-redis 配置：
+1）在 `application.yml` 中开启knife4j
 
 ```yml
-alone-redis:
-  # Redis数据库索引（默认为0）
-  database: 2
-  # Redis服务器地址
-  host: 127.0.0.1
-  # Redis服务器连接端口
-  port: 6379
-  # Redis服务器连接密码（默认为空）
-  password:
-  # 连接超时时间
-  timeout: 5000
+knife4j:
+  enable: true
 ```
+
+2) 在 `SwaggerConfig.java` 修改 swagger 相关配置信息
+
+### 接口调试
+
+启动 `MainApplication`，打开 `http://localhost:8080/api/doc.html` 调试接口

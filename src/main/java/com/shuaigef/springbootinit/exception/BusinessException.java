@@ -1,6 +1,6 @@
 package com.shuaigef.springbootinit.exception;
 
-import com.shuaigef.springbootinit.common.ErrorCode;
+import com.shuaigef.springbootinit.common.code.ErrorCode;
 
 /**
  * 自定义异常类
