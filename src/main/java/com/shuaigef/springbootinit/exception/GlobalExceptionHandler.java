@@ -25,14 +25,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BusinessException.class)
     public BaseResponse<?> businessExceptionHandler(BusinessException e) {
         log.error("BusinessException：----------------{}", e);
         return ResultUtils.error(e.getCode(), e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RuntimeException.class)
     public BaseResponse<?> runtimeExceptionHandler(RuntimeException e) {
         log.error("RuntimeException：----------------{}", e);
@@ -41,28 +39,24 @@ public class GlobalExceptionHandler {
 
     // region 权限校验相关
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = BadCredentialsException.class)
     public BaseResponse handler(BadCredentialsException e) {
         log.error("用户名或密码错误：----------------{}", e.getMessage());
         return ResultUtils.error(ErrorCode.PARAMS_ERROR, e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = UsernameNotFoundException.class)
     public BaseResponse handler(UsernameNotFoundException e) {
         log.error("登录信息有误：----------------{}", e.getMessage());
         return ResultUtils.error(ErrorCode.PARAMS_ERROR, e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(value = JwtCheckException.class)
     public BaseResponse handler(JwtCheckException e) {
         log.error("jwt令牌校验异常：----------------{}", e.getMessage());
         return ResultUtils.error(e.getCode(), e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(value = AccessDeniedException.class)
     public BaseResponse handler(AccessDeniedException e) {
         log.error("权限不足：----------------{}", e.getMessage());
@@ -73,7 +67,6 @@ public class GlobalExceptionHandler {
 
     // region 实体类属性校验相关
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public BaseResponse handler(MethodArgumentNotValidException e) {
         BindingResult result = e.getBindingResult();
@@ -83,7 +76,6 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = BindException.class)
     public BaseResponse handler(BindException e) {
         BindingResult result = e.getBindingResult();
