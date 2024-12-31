@@ -99,7 +99,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
         // 用户角色类型转换 id -> roleName
-        userVO.setUserRole(roleMapper.selectById(user.getRoleId()).getRoleName());
+        userVO.setRoleName(roleMapper.selectById(user.getRoleId()).getRoleName());
         return userVO;
     }
 

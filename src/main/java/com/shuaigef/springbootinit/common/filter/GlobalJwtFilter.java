@@ -1,6 +1,8 @@
 package com.shuaigef.springbootinit.common.filter;
 
 import com.shuaigef.springbootinit.common.utils.JwtUtils;
+import com.shuaigef.springbootinit.common.utils.SecurityUtils;
+import com.shuaigef.springbootinit.constant.RedisConstant;
 import com.shuaigef.springbootinit.constant.SecurityConstant;
 import com.shuaigef.springbootinit.exception.JwtCheckException;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -24,8 +27,11 @@ public class GlobalJwtFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
 
-    public GlobalJwtFilter(JwtUtils jwtUtils) {
+    private final StringRedisTemplate stringRedisTemplate;
+
+    public GlobalJwtFilter(JwtUtils jwtUtils, StringRedisTemplate stringRedisTemplate) {
         this.jwtUtils = jwtUtils;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Override
@@ -37,7 +43,9 @@ public class GlobalJwtFilter extends OncePerRequestFilter {
                 String jwt = resolveToken(httpServletRequest);
                 if (StringUtils.hasText(jwt)) {
                     // 验证 jwt 是否合法
-                    jwtUtils.validateToken(jwt);
+                    long currentUserId = jwtUtils.validateToken(jwt);
+                    // 校验 JWT 是否存在于 Redis 中
+                    isJwtValidInRedis(jwt, currentUserId);
                     Authentication authentication = jwtUtils.getAuthentication(jwt);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
@@ -73,5 +81,18 @@ public class GlobalJwtFilter extends OncePerRequestFilter {
      */
     private boolean checkIgnoreURI(String requestURI) {
         return SecurityConstant.IGNORE_URI_PREFIX.stream().anyMatch(requestURI::startsWith);
+    }
+
+    /**
+     * 校验 JWT 在 redis 中是否有效
+     *
+     * @return true 表示有效，false 表示无效
+     */
+    private void isJwtValidInRedis(String jwt, long currentUserId) {
+        String key = RedisConstant.LOGIN_USER + currentUserId;
+        String redisJwt = stringRedisTemplate.opsForValue().get(key);
+        if (!StringUtils.hasText(redisJwt) || !jwt.equals(redisJwt)) {
+            throw new JwtCheckException("传入的令牌为空或格式错误");
+        }
     }
 }

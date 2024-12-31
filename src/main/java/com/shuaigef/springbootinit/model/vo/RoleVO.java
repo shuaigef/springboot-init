@@ -35,12 +35,6 @@ public class RoleVO implements Serializable {
     private String roleDesc;
 
     /**
-     * 角色类型
-     */
-    @ApiModelProperty(value = "角色类型")
-    private String roleType;
-
-    /**
      * 创建时间
      */
     @ApiModelProperty(value = "创建时间")

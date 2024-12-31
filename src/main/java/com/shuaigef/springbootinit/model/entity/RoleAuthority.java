@@ -52,12 +52,6 @@ public class RoleAuthority implements Serializable {
     @ApiModelProperty(value = "更新时间")
     private LocalDateTime updateTime;
 
-    /**
-     * 是否删除
-     */
-    @ApiModelProperty(value = "是否删除")
-    private Integer isDelete;
-
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

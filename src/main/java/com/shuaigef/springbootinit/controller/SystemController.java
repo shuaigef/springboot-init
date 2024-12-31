@@ -4,6 +4,7 @@ import com.shuaigef.springbootinit.common.response.BaseResponse;
 import com.shuaigef.springbootinit.common.utils.JwtUtils;
 import com.shuaigef.springbootinit.common.utils.ResultUtils;
 import com.shuaigef.springbootinit.common.utils.SecurityUtils;
+import com.shuaigef.springbootinit.constant.RedisConstant;
 import com.shuaigef.springbootinit.constant.SecurityConstant;
 import com.shuaigef.springbootinit.model.dto.user.UserLoginRequest;
 import com.shuaigef.springbootinit.model.entity.Authority;
@@ -16,6 +17,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +50,9 @@ public class SystemController {
     @Resource
     private AuthorityService authorityService;
 
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
     /**
      * 登录接口
      *
@@ -58,7 +63,7 @@ public class SystemController {
     @PostMapping("/login")
     public ResponseEntity<BaseResponse<LoginUserVO>> login(@Valid @RequestBody UserLoginRequest userLoginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userLoginRequest.getUsername(),
+                new UsernamePasswordAuthenticationToken(userLoginRequest.getUsernameOrEmail(),
                         userLoginRequest.getPassword());
         Authentication authentication = this.authenticationManager
                 .authenticate(authenticationToken);
@@ -71,9 +76,27 @@ public class SystemController {
         List<Authority> authorityList = authorityService.findMenuTree(currentUserId);
         SessionUser sessionUser =
                 (SessionUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // 将 jwt 存入 redis
+        stringRedisTemplate.opsForValue().set(
+                RedisConstant.LOGIN_USER + currentUserId,
+                jwt,
+                RedisConstant.LOGIN_USER_TIME,
+                RedisConstant.LOGIN_USER_TIME_UNIT);
+
         return new ResponseEntity<>(
                 ResultUtils.success(new LoginUserVO(jwt, sessionUser, authorityList)),
                 httpHeaders, HttpStatus.OK);
+    }
+
+    @ApiOperation("登出接口")
+    @PostMapping("/logout")
+    public BaseResponse<Boolean> logout() {
+        // 从 redis 移除 jwt
+        long currentUserId = SecurityUtils.getCurrentUserId();
+        Boolean result = stringRedisTemplate.delete(RedisConstant.LOGIN_USER + currentUserId);
+
+        return ResultUtils.success(result, "登出成功");
     }
 
 }

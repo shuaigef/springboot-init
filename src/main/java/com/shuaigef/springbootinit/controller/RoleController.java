@@ -89,8 +89,7 @@ public class RoleController {
         long current = roleQueryRequest.getCurrent();
         long pageSize = roleQueryRequest.getPageSize();
         LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(roleName), Role::getRoleName, roleName)
-                .eq(StringUtils.isNotBlank(roleType), Role::getRoleType, roleType);
+        queryWrapper.like(StringUtils.isNotBlank(roleName), Role::getRoleName, roleName);
         Page<Role> rolePage = roleService.page(new Page<>(current, pageSize), queryWrapper);
         Page<RoleVO> roleVOPage = new Page<>(current, pageSize, rolePage.getTotal());
         List<RoleVO> roleVOList = roleService.getRoleVO(rolePage.getRecords());

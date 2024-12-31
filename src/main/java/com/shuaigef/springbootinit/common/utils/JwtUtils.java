@@ -31,13 +31,15 @@ public class JwtUtils {
 
     private static final String USERNAME = "username";
     private static final String NICKNAME = "nickname";
-    /* 1 登录方式1 2 登录方式2 */
-    private static final String TYPE = "type";
     private static final String ROLE_ID = "roleId";
     private static final String USER_AVATAR = "userAvatar";
+    private static final String USER_PROFILE = "userProfile";
+    private static final String GENDER = "gender";
 
-    // 7天，秒为单位
-    private static final long EXPIRE = 604800000l;
+    // 7天，毫秒为单位
+    // private static final long EXPIRE = 604800000l;
+    // 1天
+    private static final long EXPIRE = 86400000l;
 
     private static final String JWT_SECRET = "shuaigef";
 
@@ -69,34 +71,11 @@ public class JwtUtils {
                 .setSubject(sessionUser.getUserId() + "")
                 // 自定义信息 对应sessionUser中的扩展信息
                 .claim(USERNAME, sessionUser.getUsername())
-                .claim(TYPE, 1)
                 .claim(ROLE_ID, sessionUser.getRoleId())
                 .claim(NICKNAME, sessionUser.getNickname())
                 .claim(USER_AVATAR, sessionUser.getUserAvatar())
-                // 签名信息
-                .signWith(SignatureAlgorithm.HS512, generalKey()).setExpiration(validity)
-                // 到期时间
-                .compact();
-    }
-
-    /**
-     * 生成token 如果更改sessionUser 需要一起改了生成和解析token的方法
-     */
-    public String createThirdToken(Authentication authentication) {
-        long now = System.currentTimeMillis();
-        Date validity = new Date(now + EXPIRE);
-
-        SessionUser sessionUser = (SessionUser) authentication.getPrincipal();
-
-        return Jwts.builder()
-                // 用户ID
-                .setSubject(sessionUser.getUserId() + "")
-                // 自定义信息 对应sessionUser中的扩展信息
-                .claim(USERNAME, sessionUser.getUsername())
-                .claim(TYPE, 2)
-                .claim(ROLE_ID, sessionUser.getRoleId())
-                .claim(NICKNAME, sessionUser.getNickname())
-                .claim(USER_AVATAR, sessionUser.getUserAvatar())
+                .claim(USER_PROFILE, sessionUser.getUserProfile())
+                .claim(GENDER, sessionUser.getGender())
                 // 签名信息
                 .signWith(SignatureAlgorithm.HS512, generalKey()).setExpiration(validity)
                 // 到期时间
@@ -110,24 +89,29 @@ public class JwtUtils {
         Claims claims = Jwts.parser().setSigningKey(generalKey()).parseClaimsJws(token).getBody();
 
         String username = claims.get(USERNAME) + "";
-        Integer type = Integer.valueOf(claims.get(TYPE) + "");
         Long roleId = Long.valueOf(claims.get(ROLE_ID) + "");
         String nickname = claims.get(NICKNAME) + "";
         String userAvatar = claims.get(USER_AVATAR) + "";
+        String userProfile = claims.get(USER_PROFILE) + "";
+        Integer gender = Integer.valueOf(claims.get(GENDER) + "");
         long userId = Long.parseLong(claims.getSubject());
         List<GrantedAuthority> authorityList = new ArrayList<>();
         authorityList.add(new SimpleGrantedAuthority("ROLE_" + username.toUpperCase()));
-        SessionUser principal = new SessionUser(username, "", authorityList, userId, type, roleId,
-                nickname, userAvatar);
+        SessionUser principal = new SessionUser(username, "", authorityList, userId, roleId,
+                nickname, userAvatar, userProfile, gender);
         return new UsernamePasswordAuthenticationToken(principal, token, authorityList);
     }
 
     /**
      * 校验token
+     *
+     * @param authToken
+     * @return 返回当前登录用户id
      */
-    public void validateToken(String authToken) {
+    public long validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(generalKey()).parseClaimsJws(authToken);
+            Claims claims = Jwts.parser().setSigningKey(generalKey()).parseClaimsJws(authToken).getBody();
+            return Long.parseLong(claims.getSubject());
         } catch (MalformedJwtException e) {
             log.info("Invalid JWT token.");
             log.trace("Invalid JWT token trace: {}", e);

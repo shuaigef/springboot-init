@@ -21,24 +21,27 @@ public class SessionUser extends User {
 
     private Long userId;
 
-    // 登录方式 1 - 登录方式1 2 - 登录方式2
-    private Integer type;
-
     private Long roleId;
 
     private String nickname;
 
     private String userAvatar;
 
+    private String userProfile;
+
+    private Integer gender;
+
     public SessionUser(String username, String password,
             Collection<? extends GrantedAuthority> authorities,
-            Long userId, Integer type, Long roleId, String nickname, String userAvatar) {
+            Long userId, Long roleId, String nickname, String userAvatar,
+            String userProfile, Integer gender) {
         super(username, password, authorities);
         this.userId = userId;
-        this.type = type;
         this.roleId = roleId;
         this.nickname = nickname;
         this.userAvatar = userAvatar;
+        this.userProfile = userProfile;
+        this.gender = gender;
     }
 
     /**

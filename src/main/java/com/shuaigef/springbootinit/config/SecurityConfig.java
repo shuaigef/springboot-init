@@ -2,11 +2,13 @@ package com.shuaigef.springbootinit.config;
 
 import com.shuaigef.springbootinit.common.filter.GlobalJwtFilter;
 import com.shuaigef.springbootinit.common.utils.JwtUtils;
+import com.shuaigef.springbootinit.common.utils.SecurityUtils;
 import com.shuaigef.springbootinit.constant.SecurityConstant;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -33,8 +35,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Resource
     private UserDetailsService userDetailsService;
+
     @Resource
     private JwtUtils jwtUtils;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     @Bean
@@ -62,7 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 不做权限限制的
                 .antMatchers(SecurityConstant.PERMIT_ALL_MATCHERS).permitAll().antMatchers("/**")
                 .authenticated()
-                .and().addFilterBefore(new GlobalJwtFilter(jwtUtils),
+                .and().addFilterBefore(new GlobalJwtFilter(jwtUtils, stringRedisTemplate),
                 UsernamePasswordAuthenticationFilter.class);
 
     }

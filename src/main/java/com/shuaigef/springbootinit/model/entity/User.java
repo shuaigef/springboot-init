@@ -59,6 +59,24 @@ public class User implements Serializable {
     private String userProfile;
 
     /**
+     * 性别
+     */
+    @ApiModelProperty(value = "性别")
+    private Integer gender;
+
+    /**
+     * 邮箱
+     */
+    @ApiModelProperty(value = "邮箱")
+    private String email;
+
+    /**
+     * 手机号
+     */
+    @ApiModelProperty(value = "手机号")
+    private String phoneNumber;
+
+    /**
      * 角色id
      */
     @ApiModelProperty(value = "角色id")

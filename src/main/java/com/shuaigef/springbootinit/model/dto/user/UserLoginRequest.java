@@ -16,10 +16,9 @@ import lombok.Data;
 @Data
 public class UserLoginRequest implements Serializable {
 
-    @ApiModelProperty(value = "用户名", required = true)
-    @NotBlank(message = "用户名不能为空")
-    @Size(min = 4, max = 10, message = "用户名必须为4-10位")
-    private String username;
+    @ApiModelProperty(value = "用户名或邮箱", required = true)
+    @NotBlank(message = "用户名或邮箱不能为空")
+    private String usernameOrEmail;
 
     @ApiModelProperty(value = "密码", required = true)
     @NotBlank(message = "密码不能为空")

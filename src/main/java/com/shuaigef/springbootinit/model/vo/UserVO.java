@@ -41,10 +41,34 @@ public class UserVO implements Serializable {
     private String userProfile;
 
     /**
-     * 用户角色：user/admin/ban
+     * 性别
      */
-    @ApiModelProperty(value = "用户角色")
-    private String userRole;
+    @ApiModelProperty(value = "性别")
+    private String gender;
+
+    /**
+     * 邮箱
+     */
+    @ApiModelProperty(value = "邮箱")
+    private String email;
+
+    /**
+     * 手机号
+     */
+    @ApiModelProperty(value = "手机号")
+    private String phoneNumber;
+
+    /**
+     * 角色 id
+     */
+    @ApiModelProperty(value = "角色id")
+    private Long roleId;
+
+    /**
+     * 用户角色名
+     */
+    @ApiModelProperty(value = "用户角色名")
+    private String roleName;
 
     /**
      * 创建时间

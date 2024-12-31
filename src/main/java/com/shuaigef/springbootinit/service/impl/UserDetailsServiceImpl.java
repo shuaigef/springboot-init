@@ -1,6 +1,7 @@
 package com.shuaigef.springbootinit.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.shuaigef.springbootinit.common.utils.RegexUtils;
 import com.shuaigef.springbootinit.mapper.UserMapper;
 import com.shuaigef.springbootinit.model.entity.SessionUser;
 import com.shuaigef.springbootinit.model.entity.User;
@@ -28,16 +29,22 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(final String username) {
-        log.debug("Authenticating {}", username);
-        User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
-                .eq(User::getUsername, username));
+    public UserDetails loadUserByUsername(final String usernameOrEmail) {
+        log.debug("Authenticating {}", usernameOrEmail);
+        User user = null;
+        if (RegexUtils.isEmail(usernameOrEmail)) {
+            user = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                    .eq(User::getEmail, usernameOrEmail));
+        } else {
+            user = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                    .eq(User::getUsername, usernameOrEmail));
+        }
         return Optional.ofNullable(user)
-                .map(userTemp -> new SessionUser(username, userTemp.getPassword(),
+                .map(userTemp -> new SessionUser(userTemp.getUsername(), userTemp.getPassword(),
                         new ArrayList<>(),
-                        userTemp.getId(), 1, userTemp.getRoleId(), userTemp.getNickname(),
-                        userTemp.getUserAvatar()))
+                        userTemp.getId(), userTemp.getRoleId(), userTemp.getNickname(),
+                        userTemp.getUserAvatar(), userTemp.getUserProfile(),
+                        userTemp.getGender()))
                 .orElseThrow(() -> new UsernameNotFoundException("登录信息错误"));
     }
-
 }
