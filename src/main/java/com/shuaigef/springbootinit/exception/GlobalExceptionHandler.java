@@ -26,13 +26,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
-    public BaseResponse<?> businessExceptionHandler(BusinessException e) {
+    public BaseResponse businessExceptionHandler(BusinessException e) {
         log.error("BusinessException：----------------{}", e);
         return ResultUtils.error(e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public BaseResponse<?> runtimeExceptionHandler(RuntimeException e) {
+    public BaseResponse runtimeExceptionHandler(RuntimeException e) {
         log.error("RuntimeException：----------------{}", e);
         return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "系统错误");
     }
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AccessDeniedException.class)
     public BaseResponse handler(AccessDeniedException e) {
         log.error("权限不足：----------------{}", e.getMessage());
-        return ResultUtils.error(ErrorCode.FORBIDDEN_ERROR);
+        return ResultUtils.error(ErrorCode.FORBIDDEN_ERROR, e.getMessage());
     }
 
     // endregion
@@ -74,7 +74,6 @@ public class GlobalExceptionHandler {
         log.error("实体校验异常：----------------{}", objectError.getDefaultMessage());
         return ResultUtils.error(ErrorCode.PARAMS_ERROR, objectError.getDefaultMessage());
     }
-
 
     @ExceptionHandler(value = BindException.class)
     public BaseResponse handler(BindException e) {

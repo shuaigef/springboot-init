@@ -7,6 +7,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -112,7 +113,7 @@ public class JwtUtils {
         try {
             Claims claims = Jwts.parser().setSigningKey(generalKey()).parseClaimsJws(authToken).getBody();
             return Long.parseLong(claims.getSubject());
-        } catch (MalformedJwtException e) {
+        } catch (MalformedJwtException | SignatureException e) {
             log.info("Invalid JWT token.");
             log.trace("Invalid JWT token trace: {}", e);
             throw new JwtCheckException("无效的JWT令牌！");

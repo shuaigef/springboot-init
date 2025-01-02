@@ -23,7 +23,7 @@ import springfox.documentation.annotations.ApiIgnore;
 public class GlobalFilterExceptionController {
 
   @ResponseStatus(HttpStatus.FORBIDDEN)
-  @GetMapping("/tokenError")
+  @RequestMapping("/tokenError")
   public BaseResponse tokenError(HttpServletRequest httpServletRequest) {
     Exception errorMessage =
         (Exception) httpServletRequest.getAttribute(SecurityConstant.ERROR_MESSAGE);

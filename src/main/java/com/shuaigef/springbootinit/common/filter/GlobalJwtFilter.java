@@ -92,7 +92,7 @@ public class GlobalJwtFilter extends OncePerRequestFilter {
         String key = RedisConstant.LOGIN_USER + currentUserId;
         String redisJwt = stringRedisTemplate.opsForValue().get(key);
         if (!StringUtils.hasText(redisJwt) || !jwt.equals(redisJwt)) {
-            throw new JwtCheckException("传入的令牌为空或格式错误");
+            throw new JwtCheckException("无效的JWT令牌！");
         }
     }
 }
