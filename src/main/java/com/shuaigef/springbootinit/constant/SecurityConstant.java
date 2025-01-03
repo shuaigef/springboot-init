@@ -26,11 +26,11 @@ public interface SecurityConstant {
     Long ADMIN_ROLE_ID = 1L;
 
     List<String> IGNORE_URI_PREFIX = Arrays.asList(
-            "/api/system/login", "/api/system/register", "/api/swagger-resources", "/api/swagger-ui.html", "/api/doc.html",
+            "/api/system/login", "/api/system/register", "/api/system/send", "/api/swagger-resources", "/api/swagger-ui.html", "/api/doc.html",
             "/api/images", "/api/webjars", "/api/v2/api-docs", "/api/favicon.ico", "/handler");
 
     String[] PERMIT_ALL_MATCHERS =
-            new String[]{"/system/login", "/system/register", "/swagger-resources/**", "/swagger-ui.html",
+            new String[]{"/system/login", "/system/register", "/system/send", "/swagger-resources/**", "/swagger-ui.html",
                     "/doc.html", "/images/**", "/webjars/**", "/v2/api-docs", "/favicon.ico",
                     "/handler/**"};
 

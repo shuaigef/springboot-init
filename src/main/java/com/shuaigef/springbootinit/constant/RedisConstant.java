@@ -10,6 +10,16 @@ import java.util.concurrent.TimeUnit;
 public interface RedisConstant {
 
     /**
+     * 邮箱验证码 key
+     */
+    String VERIFICATION_CODE_KEY = "_verification_code_key:";
+
+    /**
+     * 验证码发送间隔 key
+     */
+    String INTERVAL_KEY = "_interval_key:";
+
+    /**
      * 用户登录 key
      */
     String LOGIN_USER = "login_user:";
