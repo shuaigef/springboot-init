@@ -3,6 +3,7 @@ package com.shuaigef.springbootinit.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shuaigef.springbootinit.model.dto.user.UserAddRequest;
 import com.shuaigef.springbootinit.model.dto.user.UserRegisterRequest;
+import com.shuaigef.springbootinit.model.dto.user.UserUpdateBasicInfoRequest;
 import com.shuaigef.springbootinit.model.entity.User;
 import com.shuaigef.springbootinit.model.vo.UserVO;
 import java.util.List;
@@ -25,6 +26,8 @@ public interface UserService extends IService<User> {
     long addUser(UserAddRequest userAddRequest);
 
     boolean deleteUserById(long id);
+
+    boolean updateUserBasicInfo(UserUpdateBasicInfoRequest userUpdateBasicInfoRequest);
 
     UserVO getUserVO(User user);
 

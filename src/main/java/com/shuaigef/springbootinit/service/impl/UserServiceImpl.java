@@ -1,11 +1,11 @@
 package com.shuaigef.springbootinit.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shuaigef.springbootinit.common.code.ErrorCode;
+import com.shuaigef.springbootinit.common.utils.SecurityUtils;
 import com.shuaigef.springbootinit.constant.RedisConstant;
 import com.shuaigef.springbootinit.constant.SecurityConstant;
 import com.shuaigef.springbootinit.exception.BusinessException;
@@ -13,6 +13,7 @@ import com.shuaigef.springbootinit.mapper.RoleMapper;
 import com.shuaigef.springbootinit.mapper.UserMapper;
 import com.shuaigef.springbootinit.model.dto.user.UserAddRequest;
 import com.shuaigef.springbootinit.model.dto.user.UserRegisterRequest;
+import com.shuaigef.springbootinit.model.dto.user.UserUpdateBasicInfoRequest;
 import com.shuaigef.springbootinit.model.entity.Role;
 import com.shuaigef.springbootinit.model.entity.User;
 import com.shuaigef.springbootinit.model.enums.UserGenderEnum;
@@ -149,6 +150,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         baseMapper.deleteById(id);
         return true;
+    }
+
+    @Override
+    public boolean updateUserBasicInfo(UserUpdateBasicInfoRequest userUpdateBasicInfoRequest) {
+        Integer gender = userUpdateBasicInfoRequest.getGender();
+        String username = userUpdateBasicInfoRequest.getUsername();
+
+        long currentUserId = SecurityUtils.getCurrentUserId();
+        if (SecurityConstant.ADMIN_USER_ID.equals(currentUserId) && !SecurityConstant.ADMIN_USERNAME.equals(username)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "不可以修改管理员用户名");
+        }
+
+        UserGenderEnum userGenderEnum = UserGenderEnum.getEnumByValue(gender);
+        if (userGenderEnum == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "性别错误");
+        }
+        User user = new User();
+        BeanUtils.copyProperties(userUpdateBasicInfoRequest, user);
+        user.setId(currentUserId);
+        boolean result = this.updateById(user);
+        if (!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "更新用户基本信息失败");
+        }
+        return result;
     }
 
     @Override
