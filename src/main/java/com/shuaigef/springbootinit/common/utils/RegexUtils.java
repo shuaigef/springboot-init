@@ -15,8 +15,22 @@ public class RegexUtils {
 
     public static final String PASSWORD_REGEX = "^[\\w!@#$%^&*()+-=.]{6,18}$";
 
+    public static final String PHONE_NUMBER_REGEX = "^1[3-9]\\d{9}$";
+
     public static boolean isEmail(String email) {
         return Pattern.matches(EMAIL_REGEX, email);
+    }
+
+    public static boolean isNotEmail(String email) {
+        return !Pattern.matches(EMAIL_REGEX, email);
+    }
+
+    public static boolean isPhoneNumber(String phoneNumber) {
+        return Pattern.matches(PHONE_NUMBER_REGEX, phoneNumber);
+    }
+
+    public static boolean isNotPhoneNumber(String phoneNumber) {
+        return !Pattern.matches(PHONE_NUMBER_REGEX, phoneNumber);
     }
 
 }

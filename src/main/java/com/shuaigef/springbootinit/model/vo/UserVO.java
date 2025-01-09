@@ -23,10 +23,16 @@ public class UserVO implements Serializable {
     private Long id;
 
     /**
-     * 用户昵称
+     * 用户名
      */
-    @ApiModelProperty(value = "用户昵称")
+    @ApiModelProperty(value = "用户名")
     private String username;
+
+    /**
+     * 昵称
+     */
+    @ApiModelProperty(value = "昵称")
+    private String nickname;
 
     /**
      * 用户头像
@@ -44,7 +50,7 @@ public class UserVO implements Serializable {
      * 性别
      */
     @ApiModelProperty(value = "性别")
-    private String gender;
+    private Integer gender;
 
     /**
      * 邮箱

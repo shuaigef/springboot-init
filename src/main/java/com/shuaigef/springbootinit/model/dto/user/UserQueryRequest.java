@@ -27,11 +27,5 @@ public class UserQueryRequest extends PageRequest implements Serializable {
     @ApiModelProperty(value = "昵称")
     private String nickname;
 
-    /**
-     * 角色id
-     */
-    @ApiModelProperty(value = "角色id")
-    private Long roleId;
-
     private static final long serialVersionUID = 1L;
 }

@@ -1,10 +1,12 @@
 package com.shuaigef.springbootinit.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shuaigef.springbootinit.common.code.ErrorCode;
+import com.shuaigef.springbootinit.common.utils.RegexUtils;
 import com.shuaigef.springbootinit.common.utils.SecurityUtils;
 import com.shuaigef.springbootinit.constant.RedisConstant;
 import com.shuaigef.springbootinit.constant.SecurityConstant;
@@ -102,18 +104,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public long addUser(UserAddRequest userAddRequest) {
         String username = userAddRequest.getUsername();
         String password = userAddRequest.getPassword();
-        String checkPassword = userAddRequest.getCheckPassword();
         String nickname = userAddRequest.getNickname();
-        String userAvatar = userAddRequest.getUserAvatar();
-        String userProfile = userAddRequest.getUserProfile();
+        Integer gender = userAddRequest.getGender();
         Long roleId = userAddRequest.getRoleId();
+        String userAvatar = userAddRequest.getUserAvatar();
+        String email = userAddRequest.getEmail();
+        String phoneNumber = userAddRequest.getPhoneNumber();
+
+
         // username 不能为 admin
         if (StringUtils.equals(SecurityConstant.ADMIN_USERNAME, username)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        // 两次密码不一致
-        if (!StringUtils.equals(password, checkPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次密码输入不一致");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名不能为 admin");
         }
         // 用户名已存在
         User selectUser = baseMapper
@@ -122,18 +123,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名已存在");
         }
         // 角色是否为管理员以及是否存在
-        if (SecurityConstant.ADMIN_ROLE_ID.compareTo(roleId) == 0) {
+        if (SecurityConstant.ADMIN_ROLE_ID == roleId) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "角色不能为管理员");
         }
         Role role = roleMapper.selectById(roleId);
         if (role == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "角色不存在");
         }
+        // 性别
+        UserGenderEnum userGenderEnum = UserGenderEnum.getEnumByValue(gender);
+        if (userGenderEnum == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "性别错误");
+        }
+        // 邮箱
+        if (StringUtils.isNotEmpty(email) && RegexUtils.isNotEmail(email)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱错误");
+        }
+        // 手机号
+        if (StringUtils.isNotEmpty(phoneNumber) && RegexUtils.isNotPhoneNumber(phoneNumber)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱错误");
+        }
 
         User user = new User();
         BeanUtils.copyProperties(userAddRequest, user);
         user.setPassword(passwordEncoder.encode(password));
-        baseMapper.insert(user);
+        boolean result = this.save(user);
+        if (!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
         return user.getId();
     }
 
@@ -148,7 +165,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
         }
-        baseMapper.deleteById(id);
+        boolean result = this.removeById(id);
+        if (!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean deleteBatchUser(List<Long> ids) {
+        // 删除用户不能为管理员
+        if (CollectionUtil.contains(ids, SecurityConstant.ADMIN_USER_ID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "不能删除管理员");
+        }
+        boolean result = this
+                .remove(new LambdaQueryWrapper<User>().in(User::getId, ids));
+        if (!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "批量删除失败");
+        }
         return true;
     }
 

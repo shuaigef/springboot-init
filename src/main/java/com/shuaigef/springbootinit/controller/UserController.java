@@ -3,6 +3,7 @@ package com.shuaigef.springbootinit.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.shuaigef.springbootinit.common.code.ErrorCode;
+import com.shuaigef.springbootinit.common.request.DeleteBatchRequest;
 import com.shuaigef.springbootinit.common.request.DeleteRequest;
 import com.shuaigef.springbootinit.common.response.BaseResponse;
 import com.shuaigef.springbootinit.common.utils.JwtUtils;
@@ -89,6 +90,14 @@ public class UserController {
         return ResultUtils.success(result, "删除用户成功");
     }
 
+    @ApiOperation("批量删除用户")
+    @DeleteMapping("/ids")
+    @PreAuthorize("@roleCheckService.hasPermission('systemManage:userManage')")
+    public BaseResponse<Boolean> deleteBatchUser(@Valid @RequestBody DeleteBatchRequest deleteBatchRequest) {
+        boolean result = userService.deleteBatchUser(deleteBatchRequest.getIds());
+        return ResultUtils.success(result, "批量删除用户成功");
+    }
+
     @ApiOperation("根据 id 查询用户")
     @GetMapping("/id")
     public BaseResponse<UserVO> getUserById(@RequestParam @ApiParam(value = "id", required = true) Long id) {
@@ -104,21 +113,20 @@ public class UserController {
 
     @ApiOperation("分页查询用户列表")
     @GetMapping("/list/page")
+    @PreAuthorize("@roleCheckService.hasPermission('systemManage:userManage')")
     public BaseResponse<Page<UserVO>> listUserByPage(UserQueryRequest userQueryRequest) {
         String username = userQueryRequest.getUsername();
         String nickname = userQueryRequest.getNickname();
-        Long roleId = userQueryRequest.getRoleId();
         long current = userQueryRequest.getCurrent();
         long pageSize = userQueryRequest.getPageSize();
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.like(StringUtils.isNotBlank(username), User::getUsername, username)
-                .like(StringUtils.isNotBlank(nickname), User::getNickname, nickname)
-                .eq(roleId != null, User::getRoleId, roleId);
+                .like(StringUtils.isNotBlank(nickname), User::getNickname, nickname);
         Page<User> userPage = userService.page(new Page<>(current, pageSize), queryWrapper);
         Page<UserVO> userVOPage = new Page<>(current, pageSize, userPage.getTotal());
         List<UserVO> userVOList = userService.getUserVO(userPage.getRecords());
         userVOPage.setRecords(userVOList);
-        return ResultUtils.success(userVOPage, "查询角色列表成功");
+        return ResultUtils.success(userVOPage, "查询用户列表成功");
     }
 
     @ApiOperation("更新用户基本信息")

@@ -25,7 +25,21 @@ public interface UserService extends IService<User> {
 
     long addUser(UserAddRequest userAddRequest);
 
+    /**
+     * 删除用户
+     *
+     * @param id 用户id
+     * @return 是否成功
+     */
     boolean deleteUserById(long id);
+
+    /**
+     * 批量删除用户
+     *
+     * @param ids 用户id
+     * @return 是否成功
+     */
+    boolean deleteBatchUser(List<Long> ids);
 
     boolean updateUserBasicInfo(UserUpdateBasicInfoRequest userUpdateBasicInfoRequest);
 
