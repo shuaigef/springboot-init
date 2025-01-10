@@ -14,6 +14,7 @@ import com.shuaigef.springbootinit.exception.BusinessException;
 import com.shuaigef.springbootinit.model.dto.user.UserAddRequest;
 import com.shuaigef.springbootinit.model.dto.user.UserQueryRequest;
 import com.shuaigef.springbootinit.model.dto.user.UserUpdateBasicInfoRequest;
+import com.shuaigef.springbootinit.model.dto.user.UserUpdateRequest;
 import com.shuaigef.springbootinit.model.entity.SessionUser;
 import com.shuaigef.springbootinit.model.entity.User;
 import com.shuaigef.springbootinit.model.vo.LoginUserVO;
@@ -127,6 +128,13 @@ public class UserController {
         List<UserVO> userVOList = userService.getUserVO(userPage.getRecords());
         userVOPage.setRecords(userVOList);
         return ResultUtils.success(userVOPage, "查询用户列表成功");
+    }
+
+    @ApiOperation("修改用户")
+    @PutMapping
+    @PreAuthorize("@roleCheckService.hasPermission('systemManage:userManage')")
+    public BaseResponse<Boolean> updateUser(@Valid @RequestBody UserUpdateRequest userUpdateRequest) {
+        return ResultUtils.success(userService.updateUser(userUpdateRequest), "修改用户成功");
     }
 
     @ApiOperation("更新用户基本信息")

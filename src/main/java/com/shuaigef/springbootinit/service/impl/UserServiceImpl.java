@@ -16,6 +16,7 @@ import com.shuaigef.springbootinit.mapper.UserMapper;
 import com.shuaigef.springbootinit.model.dto.user.UserAddRequest;
 import com.shuaigef.springbootinit.model.dto.user.UserRegisterRequest;
 import com.shuaigef.springbootinit.model.dto.user.UserUpdateBasicInfoRequest;
+import com.shuaigef.springbootinit.model.dto.user.UserUpdateRequest;
 import com.shuaigef.springbootinit.model.entity.Role;
 import com.shuaigef.springbootinit.model.entity.User;
 import com.shuaigef.springbootinit.model.enums.UserGenderEnum;
@@ -187,22 +188,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
+    public boolean updateUser(UserUpdateRequest userUpdateRequest) {
+        User user = new User();
+        BeanUtils.copyProperties(userUpdateRequest, user);
+        this.validateUser(user, true);
+
+        boolean result = this.updateById(user);
+        if (!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "更新用户失败");
+        }
+        return result;
+    }
+
+    @Override
     public boolean updateUserBasicInfo(UserUpdateBasicInfoRequest userUpdateBasicInfoRequest) {
-        Integer gender = userUpdateBasicInfoRequest.getGender();
-        String username = userUpdateBasicInfoRequest.getUsername();
-
-        long currentUserId = SecurityUtils.getCurrentUserId();
-        if (SecurityConstant.ADMIN_USER_ID.equals(currentUserId) && !SecurityConstant.ADMIN_USERNAME.equals(username)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "不可以修改管理员用户名");
-        }
-
-        UserGenderEnum userGenderEnum = UserGenderEnum.getEnumByValue(gender);
-        if (userGenderEnum == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "性别错误");
-        }
         User user = new User();
         BeanUtils.copyProperties(userUpdateBasicInfoRequest, user);
-        user.setId(currentUserId);
+        user.setId(SecurityUtils.getCurrentUserId());
+        validateUser(user, true);
         boolean result = this.updateById(user);
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "更新用户基本信息失败");
@@ -250,7 +253,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 校验用户名
         String username = user.getUsername();
         if (StringUtils.isNotBlank(username)) {
-            if (isUpdate && id != null && SecurityConstant.ADMIN_USER_ID.equals(id)) {
+            if (isUpdate && SecurityConstant.ADMIN_USER_ID.equals(id)) {
                 if (!SecurityConstant.ADMIN_USERNAME.equals(username)) {
                     throw new BusinessException(ErrorCode.PARAMS_ERROR, "不能修改管理员用户名");
                 }
@@ -266,25 +269,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 校验手机号
         String phoneNumber = user.getPhoneNumber();
         if (StringUtils.isNotBlank(phoneNumber)) {
+            if (RegexUtils.isNotPhoneNumber(phoneNumber)) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "手机号错误");
+            }
             this.validateUniqueField(User::getPhoneNumber, phoneNumber, id, isUpdate, "手机号已注册");
         }
 
         // 校验邮箱
         String email = user.getEmail();
         if (StringUtils.isNotBlank(email)) {
+            if (RegexUtils.isNotEmail(email)) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱错误");
+            }
             this.validateUniqueField(User::getEmail, email, id, isUpdate, "邮箱已注册");
         }
 
         // 校验角色
         Long roleId = user.getRoleId();
         if (roleId != null && roleId > 0) {
-            // 角色是否为管理员以及是否存在
-            if (SecurityConstant.ADMIN_ROLE_ID.compareTo(roleId) == 0) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "角色不能为管理员");
-            }
-            Role role = roleService.getById(roleId);
-            if (role == null) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "角色不存在");
+            // 不可以修改管理员账号角色
+            if (isUpdate && SecurityConstant.ADMIN_USER_ID.equals(id)) {
+                if (!SecurityConstant.ADMIN_ROLE_ID.equals(roleId)) {
+                    throw new BusinessException(ErrorCode.PARAMS_ERROR, "不能修改管理员角色");
+                }
+            } else {
+                // 角色是否为管理员以及是否存在
+                if (SecurityConstant.ADMIN_ROLE_ID.compareTo(roleId) == 0) {
+                    throw new BusinessException(ErrorCode.PARAMS_ERROR, "角色不能为管理员");
+                }
+                Role role = roleService.getById(roleId);
+                if (role == null) {
+                    throw new BusinessException(ErrorCode.PARAMS_ERROR, "角色不存在");
+                }
             }
         }
 

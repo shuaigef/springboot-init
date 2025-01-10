@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.shuaigef.springbootinit.model.dto.user.UserAddRequest;
 import com.shuaigef.springbootinit.model.dto.user.UserRegisterRequest;
 import com.shuaigef.springbootinit.model.dto.user.UserUpdateBasicInfoRequest;
+import com.shuaigef.springbootinit.model.dto.user.UserUpdateRequest;
 import com.shuaigef.springbootinit.model.entity.User;
 import com.shuaigef.springbootinit.model.vo.UserVO;
 import java.util.List;
@@ -40,6 +41,14 @@ public interface UserService extends IService<User> {
      * @return 是否成功
      */
     boolean deleteBatchUser(List<Long> ids);
+
+    /**
+     * 更新用户
+     *
+     * @param userUpdateRequest 用户更新参数
+     * @return
+     */
+    boolean updateUser(UserUpdateRequest userUpdateRequest);
 
     boolean updateUserBasicInfo(UserUpdateBasicInfoRequest userUpdateBasicInfoRequest);
 

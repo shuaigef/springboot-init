@@ -3,8 +3,10 @@ package com.shuaigef.springbootinit.config;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.shuaigef.springbootinit.model.entity.RoleAuthority;
 import com.shuaigef.springbootinit.model.entity.SessionUser;
+import com.shuaigef.springbootinit.model.entity.User;
 import com.shuaigef.springbootinit.service.AuthorityService;
 import com.shuaigef.springbootinit.service.RoleAuthorityService;
+import com.shuaigef.springbootinit.service.UserService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +33,9 @@ public class RoleCheckService {
     @Resource
     private AuthorityService authorityService;
 
+    @Resource
+    private UserService userService;
+
     /**
      * check用户是否具有访问的权限 注：不需要用户登陆的接口不要使用该方法作为自定义el表达式使用
      *
@@ -40,18 +45,20 @@ public class RoleCheckService {
     public boolean hasPermission(String... keys) {
         log.info("权限校验：" + Arrays.toString(keys));
 
-        // 获取当前登陆用户信息
-        SessionUser sessionUser;
+        Long currentUserId;
         try {
-            sessionUser = (SessionUser) SecurityContextHolder.getContext()
+            // 获取当前登陆用户信息
+            SessionUser sessionUser = (SessionUser) SecurityContextHolder.getContext()
                     .getAuthentication().getPrincipal();
+            currentUserId = sessionUser.getUserId();
         } catch (ClassCastException E) {
             return false;
         }
 
         // 根据用户的 roleId 查询用户权限列表
+        User currentUser = userService.getById(currentUserId);
         LambdaQueryWrapper<RoleAuthority> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(RoleAuthority::getRoleId, sessionUser.getRoleId());
+        queryWrapper.eq(RoleAuthority::getRoleId, currentUser.getRoleId());
         List<RoleAuthority> roleAuthorityList = roleAuthorityService.list(queryWrapper);
         List<String> authorityCodeList = roleAuthorityList.stream().map(roleAuthority -> {
             return authorityService.getById(roleAuthority.getAuthorityId()).getCode();
