@@ -16,4 +16,22 @@
         id,authority_id,role_id,
         create_time,update_time
     </sql>
+
+    <select id="findAuthorityIdsByRoleId" resultType="java.lang.Long">
+        SELECT authority_id
+        FROM `role_authority`
+        <where>
+            role_id = #{roleId}
+        </where>
+    </select>
+
+    <select id="findAuthorityCodeByRoleId" resultType="java.lang.String">
+        SELECT
+        a.code
+        FROM `role_authority` AS ra
+        LEFT JOIN `authority` AS a on a.id = ra.`authority_id`
+        <where>
+            ra.`role_id` = ${roleId}
+        </where>
+    </select>
 </mapper>

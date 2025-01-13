@@ -40,16 +40,18 @@ create table if not exists role
 insert into `role` (`id`, `role_name`, `role_desc`) values (1, '超级管理员','超级管理员');
 insert into `role` (`id`, `role_name`, `role_desc`) values (2, '普通用户','普通用户');
 
-
+-- 切换库
+use my_db;
 -- 权限表
 create table if not exists authority
 (
     id             bigint auto_increment comment 'id' primary key,
     code           varchar(64)                            null comment '权限标识符',
-    menu_name      varchar(64)                            null comment '菜单名称',
+    name           varchar(64)                            null comment '权限名称',
     order_no       int                                    null comment '菜单顺序',
     parent_id      bigint                                 null comment '父节点id',
     authority_type varchar(10)                            null comment '权限类型 menu/button',
+    redirect       varchar(128)                           null comment '一级菜单跳转地址',
     route_path     varchar(128)                           null comment '路由路径',
     hidden         tinyint                                null comment '是否隐藏路由菜单(0 - 否，1 - 是)',
     menu_icon      varchar(64)                            null comment '菜单图标',
@@ -58,19 +60,19 @@ create table if not exists authority
     create_time    datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time    datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
 ) comment '权限表' collate = utf8mb4_unicode_ci;
-insert into `authority` (`id`, `code`, `menu_name`, `order_no`, `parent_id`, `authority_type`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
-values (1, 'home', '首页', 1, 0, 'menu', '/interfaceList', 0, 'icon-list', NULL, 'InterfaceList');
-insert into `authority` (`id`, `code`, `menu_name`, `order_no`, `parent_id`, `authority_type`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
-values (2, 'accountSetting', '账号设置', 2, 0, 'menu', '/accountSetting', 0, 'icon-account-settings', '', 'AccountSetting');
-insert into `authority` (`id`, `code`, `menu_name`, `order_no`, `parent_id`, `authority_type`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
-values (3, 'systemManage', '系统管理', 4, 0, 'menu', '/systemManage', 0, 'icon-setting', NULL, 'RouteView');
+insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
+values (1, 'home', '首页', 1, 0, 'menu', NULL, '/home', 0, 'icon-list', NULL, 'Home');
+insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
+values (2, 'accountSetting', '账号设置', 2, 0, 'menu', NULL, '/account/setting', 0, 'icon-account-settings', '', 'AccountSetting');
+insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
+values (3, 'systemManage', '系统管理', 4, 0, 'menu', '/system/manage/user', '/system/manage', 0, 'icon-setting', NULL, 'RouteView');
 
-insert into `authority` (`id`, `code`, `menu_name`, `order_no`, `parent_id`, `authority_type`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
-values (4, 'systemManage:userManage', '用户管理', 1, 3, 'menu', '/systemManage/userManage', 0, NULL, NULL, 'UserManage');
-insert into `authority` (`id`, `code`, `menu_name`, `order_no`, `parent_id`, `authority_type`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
-values (5, 'systemManage:roleManage', '角色管理', 2, 3, 'menu', '/systemManage/roleManage', 0, NULL, NULL, 'RoleManage');
-insert into `authority` (`id`, `code`, `menu_name`, `order_no`, `parent_id`, `authority_type`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
-values (6, 'systemManage:authorityManage', '权限管理', 3, 3, 'menu', '/systemManage/authorityManage', 0, NULL, NULL, 'AuthorityManage');
+insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
+values (4, 'systemManage:userManage', '用户管理', 1, 3, 'menu', NULL,  '/system/manage/user', 0, NULL, NULL, 'UserManage');
+insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
+values (5, 'systemManage:roleManage', '角色管理', 2, 3, 'menu', NULL, '/system/manage/role', 0, NULL, NULL, 'RoleManage');
+insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `route_path`, `hidden`, `menu_icon`, `component`, `component_name`)
+values (6, 'systemManage:authorityManage', '权限管理', 3, 3, 'menu', NULL, '/system/manage/authority', 0, NULL, NULL, 'AuthorityManage');
 
 -- 角色权限表
 create table if not exists role_authority

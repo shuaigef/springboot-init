@@ -31,10 +31,10 @@ public class AuthorityVO implements Serializable {
     private String code;
 
     /**
-     * 菜单名称
+     * 权限名称
      */
-    @ApiModelProperty(value = "菜单名称")
-    private String menuName;
+    @ApiModelProperty(value = "权限名称")
+    private String name;
 
     /**
      * 菜单顺序
@@ -53,6 +53,12 @@ public class AuthorityVO implements Serializable {
      */
     @ApiModelProperty(value = "权限类型 menu/button")
     private String authorityType;
+
+    /**
+     * 一级菜单跳转地址
+     */
+    @ApiModelProperty(value = "一级菜单跳转地址")
+    private String redirect;
 
     /**
      * 路由路径

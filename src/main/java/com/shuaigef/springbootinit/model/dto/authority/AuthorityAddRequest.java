@@ -9,21 +9,13 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * 权限修改请求
+ * 权限新增请求
  *
  * @author <a href="https://github.com/shuaigef">shuaigef</a>
  **/
-@ApiModel(description = "权限修改请求")
+@ApiModel(description = "权限新增请求")
 @Data
-public class AuthorityUpdateRequest implements Serializable {
-
-    /**
-     * id
-     */
-    @ApiModelProperty(value = "id", required = true)
-    @NotNull(message = "ID 不能为空")
-    @Min(value = 1, message = "id 必须大于 0")
-    private Long id;
+public class AuthorityAddRequest implements Serializable {
 
     /**
      * 权限标识符
