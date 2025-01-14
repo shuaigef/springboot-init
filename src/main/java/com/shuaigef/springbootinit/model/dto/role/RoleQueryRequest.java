@@ -7,11 +7,11 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * 查询角色请求
+ * 角色查询请求
  *
  * @author <a href="https://github.com/shuaigef">shuaigef</a>
  */
-@ApiModel("查询角色请求")
+@ApiModel("角色查询请求")
 @Data
 public class RoleQueryRequest extends PageRequest implements Serializable {
 
@@ -20,12 +20,6 @@ public class RoleQueryRequest extends PageRequest implements Serializable {
      */
     @ApiModelProperty(value = "角色名称")
     private String roleName;
-
-    /**
-     * 角色类型
-     */
-    @ApiModelProperty(value = "角色类型")
-    private String roleType;
 
     private static final long serialVersionUID = 1L;
 

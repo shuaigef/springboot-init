@@ -8,11 +8,11 @@ import javax.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
- * 修改角色请求
+ * 角色修改请求
  *
  * @author <a href="https://github.com/shuaigef">shuaigef</a>
  */
-@ApiModel(description = "修改角色请求")
+@ApiModel(description = "角色修改请求")
 @Data
 public class RoleUpdateRequest implements Serializable {
 
@@ -29,20 +29,13 @@ public class RoleUpdateRequest implements Serializable {
     @ApiModelProperty(value = "角色名称", required = true)
     @NotBlank(message = "角色名称不能为空")
     private String roleName;
-
+//
     /**
      * 角色描述
      */
     @ApiModelProperty(value = "角色描述", required = true)
     @NotBlank(message = "角色描述不能为空")
     private String roleDesc;
-
-    /**
-     * 角色类型
-     */
-    @ApiModelProperty(value = "角色类型", required = true)
-    @NotBlank(message = "角色类型不能为空")
-    private String roleType;
 
     private static final long serialVersionUID = 1L;
 }

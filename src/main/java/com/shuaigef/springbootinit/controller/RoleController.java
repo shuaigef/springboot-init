@@ -1,8 +1,8 @@
 package com.shuaigef.springbootinit.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.shuaigef.springbootinit.common.code.ErrorCode;
+import com.shuaigef.springbootinit.common.request.DeleteBatchRequest;
 import com.shuaigef.springbootinit.common.request.DeleteRequest;
 import com.shuaigef.springbootinit.common.response.BaseResponse;
 import com.shuaigef.springbootinit.common.utils.ResultUtils;
@@ -18,7 +18,6 @@ import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +39,7 @@ public class RoleController {
     @ApiOperation("新增角色")
     @PostMapping
     @PreAuthorize("@roleCheckService.hasPermission('systemManage:roleManage')")
-    public BaseResponse addRole(@Valid @RequestBody RoleAddRequest roleAddRequest) {
+    public BaseResponse<Long> addRole(@Valid @RequestBody RoleAddRequest roleAddRequest) {
         long roleId = roleService.addRole(roleAddRequest);
         return ResultUtils.success(roleId, "新增角色成功");
     }
@@ -48,7 +47,7 @@ public class RoleController {
     @ApiOperation("修改角色")
     @PutMapping
     @PreAuthorize("@roleCheckService.hasPermission('systemManage:roleManage')")
-    public BaseResponse addRole(@Valid @RequestBody RoleUpdateRequest roleUpdateRequest) {
+    public BaseResponse<Boolean> addRole(@Valid @RequestBody RoleUpdateRequest roleUpdateRequest) {
         boolean result = roleService.updateRole(roleUpdateRequest);
         return ResultUtils.success(result, "修改角色成功");
     }
@@ -56,13 +55,22 @@ public class RoleController {
     @ApiOperation("删除角色")
     @DeleteMapping
     @PreAuthorize("@roleCheckService.hasPermission('systemManage:roleManage')")
-    public BaseResponse deleteRole(@Valid @RequestBody DeleteRequest deleteRequest) {
-        boolean result = roleService.deleteRoleById(deleteRequest.getId());
+    public BaseResponse<Boolean> deleteRole(@Valid @RequestBody DeleteRequest deleteRequest) {
+        boolean result = roleService.deleteRole(deleteRequest.getId());
         return ResultUtils.success(result, "删除角色成功");
+    }
+
+    @ApiOperation("批量删除角色")
+    @DeleteMapping("/ids")
+    @PreAuthorize("@roleCheckService.hasPermission('systemManage:roleManage')")
+    public BaseResponse<Boolean> deleteBatchRole(@Valid @RequestBody DeleteBatchRequest deleteBatchRequest) {
+        boolean result = roleService.deleteBatchRole(deleteBatchRequest.getIds());
+        return ResultUtils.success(result, "批量删除角色成功");
     }
 
     @ApiOperation("根据 id 查询角色")
     @GetMapping("/id")
+    @PreAuthorize("@roleCheckService.hasPermission('systemManage:roleManage')")
     public BaseResponse<RoleVO> getRoleById(@RequestParam Long id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "id 必须大于 0");
@@ -74,7 +82,7 @@ public class RoleController {
         return ResultUtils.success(roleService.getRoleVO(role), "查询角色成功");
     }
 
-    @ApiOperation("查询角色列表")
+    @ApiOperation("查询角色列表-选择角色使用")
     @GetMapping("/list")
     public BaseResponse<List<RoleVO>> listRole() {
         List<Role> roleList = roleService.list();
@@ -83,18 +91,9 @@ public class RoleController {
 
     @ApiOperation("分页查询角色列表")
     @GetMapping("/list/page")
+    @PreAuthorize("@roleCheckService.hasPermission('systemManage:roleManage')")
     public BaseResponse<Page<RoleVO>> listRoleByPage(RoleQueryRequest roleQueryRequest) {
-        String roleName = roleQueryRequest.getRoleName();
-        String roleType = roleQueryRequest.getRoleType();
-        long current = roleQueryRequest.getCurrent();
-        long pageSize = roleQueryRequest.getPageSize();
-        LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(roleName), Role::getRoleName, roleName);
-        Page<Role> rolePage = roleService.page(new Page<>(current, pageSize), queryWrapper);
-        Page<RoleVO> roleVOPage = new Page<>(current, pageSize, rolePage.getTotal());
-        List<RoleVO> roleVOList = roleService.getRoleVO(rolePage.getRecords());
-        roleVOPage.setRecords(roleVOList);
-        return ResultUtils.success(roleVOPage, "查询角色列表成功");
+        return ResultUtils.success(roleService.listRoleByPage(roleQueryRequest), "查询角色列表成功");
     }
 
 }
