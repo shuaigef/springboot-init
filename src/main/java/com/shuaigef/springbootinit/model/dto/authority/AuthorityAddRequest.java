@@ -65,7 +65,7 @@ public class AuthorityAddRequest implements Serializable {
      */
     @ApiModelProperty(value = "路由路径", required = true)
     @NotBlank(message = "路由路径不能为空")
-    private String routePath;
+    private String path;
 
     /**
      * 是否隐藏路由菜单(0 - 否，1 - 是)

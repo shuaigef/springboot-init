@@ -12,7 +12,7 @@
             <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
             <result property="authorityType" column="authority_type" jdbcType="VARCHAR"/>
             <result property="redirect" column="redirect" jdbcType="VARCHAR"/>
-            <result property="routePath" column="route_path" jdbcType="VARCHAR"/>
+            <result property="path" column="path" jdbcType="VARCHAR"/>
             <result property="hidden" column="hidden" jdbcType="TINYINT"/>
             <result property="menuIcon" column="menu_icon" jdbcType="VARCHAR"/>
             <result property="component" column="component" jdbcType="VARCHAR"/>
@@ -24,7 +24,7 @@
     <sql id="Base_Column_List">
         id,code,name,
         order_no,parent_id,authority_type,redirect,
-        route_path,hidden,menu_icon,
+        path,hidden,menu_icon,
         component,component_name,create_time,
         update_time
     </sql>

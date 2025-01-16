@@ -64,7 +64,7 @@ public class AuthorityVO implements Serializable {
      * 路由路径
      */
     @ApiModelProperty(value = "路由路径")
-    private String routePath;
+    private String path;
 
     /**
      * 是否隐藏路由菜单(0 - 否，1 - 是)
