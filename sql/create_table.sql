@@ -7,7 +7,7 @@ create database if not exists my_db;
 use my_db;
 
 -- 用户表
-create table if not exists user
+create table if not exists sys_user
 (
     id            bigint auto_increment comment 'id' primary key,
     username      varchar(256)                           null comment '用户名',
@@ -23,12 +23,12 @@ create table if not exists user
     update_time   datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     is_delete     tinyint      default 0                 not null comment '是否删除'
 ) comment '用户表' collate = utf8mb4_unicode_ci;
-insert into `user` (`id`, `username`, `password`, `nickname`, `gender`, `role_id`)
+insert into `sys_user` (`id`, `username`, `password`, `nickname`, `gender`, `role_id`)
 values (1, 'admin','$2a$10$mvEZKI9k.STo6lczs8CsW..yO1Kh6u5J/1EoeBLNTvTCBpJM7Htli', '管理员', 0, 1);
 
 
 -- 角色表
-create table if not exists role
+create table if not exists sys_role
 (
     id         bigint auto_increment comment 'id' primary key,
     role_name    varchar(64)                            null comment '角色名称',
@@ -37,13 +37,13 @@ create table if not exists role
     update_time  datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     is_delete    tinyint      default 0                 not null comment '是否删除'
 ) comment '角色表' collate = utf8mb4_unicode_ci;
-insert into `role` (`id`, `role_name`, `role_desc`) values (1, '超级管理员','超级管理员');
-insert into `role` (`id`, `role_name`, `role_desc`) values (2, '普通用户','普通用户');
+insert into `sys_role` (`id`, `role_name`, `role_desc`) values (1, '超级管理员','超级管理员');
+insert into `sys_role` (`id`, `role_name`, `role_desc`) values (2, '普通用户','普通用户');
 
 -- 切换库
 use my_db;
 -- 权限表
-create table if not exists authority
+create table if not exists sys_authority
 (
     id             bigint auto_increment comment 'id' primary key,
     code           varchar(64)                            null comment '权限标识符',
@@ -60,22 +60,22 @@ create table if not exists authority
     create_time    datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time    datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
 ) comment '权限表' collate = utf8mb4_unicode_ci;
-insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
+insert into `sys_authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
 values (1, 'home', '首页', 1, 0, 'menu', NULL, '/home', 0, 'icon-list', NULL, 'Home');
-insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
+insert into `sys_authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
 values (2, 'accountSetting', '账号设置', 2, 0, 'menu', NULL, '/account/setting', 0, 'icon-account-settings', '', 'AccountSetting');
-insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
-values (3, 'systemManage', '系统管理', 4, 0, 'menu', '/system/manage/user', '/system/manage', 0, 'icon-setting', NULL, 'RouteView');
+insert into `sys_authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
+values (3, 'systemManage', '系统管理', 4, 0, 'menu', '/system/manage/sysUser', '/system/manage', 0, 'icon-setting', NULL, 'RouteView');
 
-insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
-values (4, 'systemManage:userManage', '用户管理', 1, 3, 'menu', NULL,  '/system/manage/user', 0, NULL, NULL, 'UserManage');
-insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
-values (5, 'systemManage:roleManage', '角色管理', 2, 3, 'menu', NULL, '/system/manage/role', 0, NULL, NULL, 'RoleManage');
-insert into `authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
-values (6, 'systemManage:authorityManage', '权限管理', 3, 3, 'menu', NULL, '/system/manage/authority', 0, NULL, NULL, 'AuthorityManage');
+insert into `sys_authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
+values (4, 'systemManage:userManage', '用户管理', 1, 3, 'menu', NULL,  '/system/manage/sysUser', 0, NULL, NULL, 'UserManage');
+insert into `sys_authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
+values (5, 'systemManage:roleManage', '角色管理', 2, 3, 'menu', NULL, '/system/manage/sysRole', 0, NULL, NULL, 'RoleManage');
+insert into `sys_authority` (`id`, `code`, `name`, `order_no`, `parent_id`, `authority_type`, `redirect`, `path`, `hidden`, `menu_icon`, `component`, `component_name`)
+values (6, 'systemManage:authorityManage', '权限管理', 3, 3, 'menu', NULL, '/system/manage/sysAuthority', 0, NULL, NULL, 'AuthorityManage');
 
 -- 角色权限表
-create table if not exists role_authority
+create table if not exists sys_role_authority
 (
     id             bigint auto_increment comment 'id' primary key,
     authority_id   bigint                                 null comment '权限id',
@@ -83,10 +83,10 @@ create table if not exists role_authority
     create_time    datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time    datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
 ) comment '角色权限表' collate = utf8mb4_unicode_ci;
-insert into `role_authority` (`id`, `authority_id`, `role_id`) values (1, 1, 1);
-insert into `role_authority` (`id`, `authority_id`, `role_id`) values (2, 2, 1);
-insert into `role_authority` (`id`, `authority_id`, `role_id`) values (3, 3, 1);
-insert into `role_authority` (`id`, `authority_id`, `role_id`) values (4, 4, 1);
-insert into `role_authority` (`id`, `authority_id`, `role_id`) values (5, 5, 1);
-insert into `role_authority` (`id`, `authority_id`, `role_id`) values (6, 6, 1);
+insert into `sys_role_authority` (`id`, `authority_id`, `role_id`) values (1, 1, 1);
+insert into `sys_role_authority` (`id`, `authority_id`, `role_id`) values (2, 2, 1);
+insert into `sys_role_authority` (`id`, `authority_id`, `role_id`) values (3, 3, 1);
+insert into `sys_role_authority` (`id`, `authority_id`, `role_id`) values (4, 4, 1);
+insert into `sys_role_authority` (`id`, `authority_id`, `role_id`) values (5, 5, 1);
+insert into `sys_role_authority` (`id`, `authority_id`, `role_id`) values (6, 6, 1);
 

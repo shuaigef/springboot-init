@@ -1,7 +1,7 @@
 package com.shuaigef.springbootinit.model.vo;
 
-import com.shuaigef.springbootinit.model.entity.Authority;
 import com.shuaigef.springbootinit.model.entity.SessionUser;
+import com.shuaigef.springbootinit.model.entity.SysAuthority;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -35,7 +35,7 @@ public class LoginUserVO implements Serializable {
      * 权限列表
      */
     @ApiModelProperty(value = "权限列表")
-    private List<Authority> authorityList;
+    private List<SysAuthority> sysAuthorityList;
 
     private static final long serialVersionUID = 1L;
 

@@ -10,7 +10,7 @@ import com.shuaigef.springbootinit.exception.BusinessException;
 import com.shuaigef.springbootinit.manager.CosManager;
 import com.shuaigef.springbootinit.model.dto.file.UploadFileRequest;
 import com.shuaigef.springbootinit.model.enums.FileUploadBizEnum;
-import com.shuaigef.springbootinit.service.UserService;
+import com.shuaigef.springbootinit.service.SysUserService;
 import io.swagger.annotations.Api;
 import java.io.File;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileController {
 
     @Resource
-    private UserService userService;
+    private SysUserService sysUserService;
 
     @Resource
     private CosManager cosManager;

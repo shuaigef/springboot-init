@@ -58,6 +58,10 @@
 ## 快速上手
 
 > 所有需要修改的地方都标记了 `todo`，便于大家找到修改的位置~
+> 
+> Tips: `application.yml` 文件包含了所有配置信息，
+> 建议根据不同环境新建配置文件进行配置，多环境配置文件已保存到 `.gitignore` 文件，避免敏感配置信息上传，
+> 例如开发环境新建 `application-dev.yml`，在该文件中配置数据库等信息
 
 ### MySQL 数据库
 
@@ -131,3 +135,7 @@ knife4j:
 ### 接口调试
 
 启动 `MainApplication`，打开 `http://localhost:8080/api/doc.html` 调试接口
+
+### 邮箱工具类
+
+复制 `/resources/config` 下的 `mail.setting.template` 文件到同级目录下，改名为`mail.setting`，并在其中进行邮箱配置

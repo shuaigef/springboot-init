@@ -2,9 +2,9 @@ package com.shuaigef.springbootinit.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.shuaigef.springbootinit.common.utils.RegexUtils;
-import com.shuaigef.springbootinit.mapper.UserMapper;
+import com.shuaigef.springbootinit.mapper.SysUserMapper;
 import com.shuaigef.springbootinit.model.entity.SessionUser;
-import com.shuaigef.springbootinit.model.entity.User;
+import com.shuaigef.springbootinit.model.entity.SysUser;
 import java.util.ArrayList;
 import java.util.Optional;
 import javax.annotation.Resource;
@@ -25,21 +25,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Resource
-    private UserMapper userMapper;
+    private SysUserMapper sysUserMapper;
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(final String usernameOrEmail) {
         log.debug("Authenticating {}", usernameOrEmail);
-        User user = null;
+        SysUser sysUser = null;
         if (RegexUtils.isEmail(usernameOrEmail)) {
-            user = userMapper.selectOne(new LambdaQueryWrapper<User>()
-                    .eq(User::getEmail, usernameOrEmail));
+            sysUser = sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>()
+                    .eq(SysUser::getEmail, usernameOrEmail));
         } else {
-            user = userMapper.selectOne(new LambdaQueryWrapper<User>()
-                    .eq(User::getUsername, usernameOrEmail));
+            sysUser = sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>()
+                    .eq(SysUser::getUsername, usernameOrEmail));
         }
-        return Optional.ofNullable(user)
+        return Optional.ofNullable(sysUser)
                 .map(userTemp -> new SessionUser(userTemp.getUsername(), userTemp.getPassword(),
                         new ArrayList<>(),
                         userTemp.getId(), userTemp.getRoleId(), userTemp.getNickname(),

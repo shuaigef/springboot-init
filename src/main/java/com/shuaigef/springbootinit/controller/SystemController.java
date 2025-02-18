@@ -11,15 +11,15 @@ import com.shuaigef.springbootinit.common.utils.SecurityUtils;
 import com.shuaigef.springbootinit.constant.RedisConstant;
 import com.shuaigef.springbootinit.constant.SecurityConstant;
 import com.shuaigef.springbootinit.exception.BusinessException;
-import com.shuaigef.springbootinit.model.dto.user.UserLoginRequest;
-import com.shuaigef.springbootinit.model.dto.user.UserRegisterRequest;
+import com.shuaigef.springbootinit.model.dto.user.SysUserLoginRequest;
+import com.shuaigef.springbootinit.model.dto.user.SysUserRegisterRequest;
 import com.shuaigef.springbootinit.model.dto.user.VerificationCodeSendRequest;
-import com.shuaigef.springbootinit.model.entity.Authority;
 import com.shuaigef.springbootinit.model.entity.SessionUser;
+import com.shuaigef.springbootinit.model.entity.SysAuthority;
 import com.shuaigef.springbootinit.model.enums.VerificationCodeBizEnum;
 import com.shuaigef.springbootinit.model.vo.LoginUserVO;
-import com.shuaigef.springbootinit.service.AuthorityService;
-import com.shuaigef.springbootinit.service.UserService;
+import com.shuaigef.springbootinit.service.SysAuthorityService;
+import com.shuaigef.springbootinit.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
@@ -58,10 +58,10 @@ public class SystemController {
     private AuthenticationManager authenticationManager;
 
     @Resource
-    private AuthorityService authorityService;
+    private SysAuthorityService sysAuthorityService;
 
     @Resource
-    private UserService userService;
+    private SysUserService sysUserService;
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -69,15 +69,15 @@ public class SystemController {
     /**
      * 登录接口
      *
-     * @param userLoginRequest
+     * @param sysUserLoginRequest
      * @return
      */
     @ApiOperation("登录接口-获取token")
     @PostMapping("/login")
-    public ResponseEntity<BaseResponse<LoginUserVO>> login(@Valid @RequestBody UserLoginRequest userLoginRequest) {
+    public ResponseEntity<BaseResponse<LoginUserVO>> login(@Valid @RequestBody SysUserLoginRequest sysUserLoginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userLoginRequest.getUsernameOrEmail(),
-                        userLoginRequest.getPassword());
+                new UsernamePasswordAuthenticationToken(sysUserLoginRequest.getUsernameOrEmail(),
+                        sysUserLoginRequest.getPassword());
         Authentication authentication = this.authenticationManager
                 .authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -86,7 +86,7 @@ public class SystemController {
         httpHeaders.add(SecurityConstant.TOKEN_HEADER, "Bearer " + jwt);
         // 获取权限树
         long currentUserId = SecurityUtils.getCurrentUserId();
-        List<Authority> authorityList = authorityService.findMenuTree(currentUserId);
+        List<SysAuthority> sysAuthorityList = sysAuthorityService.findMenuTree(currentUserId);
         SessionUser sessionUser =
                 (SessionUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -98,14 +98,14 @@ public class SystemController {
                 RedisConstant.LOGIN_USER_TIME_UNIT);
 
         return new ResponseEntity<>(
-                ResultUtils.success(new LoginUserVO(jwt, sessionUser, authorityList)),
+                ResultUtils.success(new LoginUserVO(jwt, sessionUser, sysAuthorityList)),
                 httpHeaders, HttpStatus.OK);
     }
 
     @ApiOperation("注册接口")
     @PostMapping("/register")
-    public BaseResponse<Boolean> register(@Valid @RequestBody UserRegisterRequest userRegisterRequest) {
-        return ResultUtils.success(userService.register(userRegisterRequest), "注册成功");
+    public BaseResponse<Boolean> register(@Valid @RequestBody SysUserRegisterRequest sysUserRegisterRequest) {
+        return ResultUtils.success(sysUserService.register(sysUserRegisterRequest), "注册成功");
     }
 
     @ApiOperation("验证码发送接口")

@@ -1,9 +1,9 @@
 package com.shuaigef.springbootinit.config;
 
-import com.shuaigef.springbootinit.mapper.RoleAuthorityMapper;
+import com.shuaigef.springbootinit.mapper.SysRoleAuthorityMapper;
 import com.shuaigef.springbootinit.model.entity.SessionUser;
-import com.shuaigef.springbootinit.model.entity.User;
-import com.shuaigef.springbootinit.service.UserService;
+import com.shuaigef.springbootinit.model.entity.SysUser;
+import com.shuaigef.springbootinit.service.SysUserService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,10 +25,10 @@ import org.springframework.stereotype.Service;
 public class RoleCheckService {
 
     @Resource
-    private RoleAuthorityMapper roleAuthorityMapper;
+    private SysRoleAuthorityMapper sysRoleAuthorityMapper;
 
     @Resource
-    private UserService userService;
+    private SysUserService sysUserService;
 
     /**
      * check用户是否具有访问的权限 注：不需要用户登陆的接口不要使用该方法作为自定义el表达式使用
@@ -50,8 +50,9 @@ public class RoleCheckService {
         }
 
         // 根据用户的 roleId 查询用户权限列表
-        User currentUser = userService.getById(currentUserId);
-        List<String> authorityCodeList = roleAuthorityMapper.findAuthorityCodeByRoleId(currentUser.getRoleId());
+        SysUser currentSysUser = sysUserService.getById(currentUserId);
+        List<String> authorityCodeList = sysRoleAuthorityMapper.findAuthorityCodeByRoleId(
+                currentSysUser.getRoleId());
 
         // 权限校验
         List<GrantedAuthority> grantedAuthorityList = authorityCodeList.stream()

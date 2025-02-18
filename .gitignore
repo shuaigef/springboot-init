@@ -5,6 +5,12 @@ mvnw.cmd
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### 自定义 ###
+mail.setting
+application-dev.yml
+application-prod.yml
+application-test.yml
+
 ### STS ###
 .apt_generated
 .classpath
